@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="brand-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.8rem; background: linear-gradient(135deg, #10b981, #059669);">🔐</div>
+                    <h3 class="fw-bold text-dark">Two-Factor OTP Verification</h3>
+                    <p class="text-muted">Enter the 6-digit security code sent to your registered contact:</p>
+                    <span class="badge bg-light text-dark px-3 py-2 border rounded-pill fs-6">{{ recipient or "your registered device" }}</span>
+                </div>
+
+                {% if demo_otp %}
+                <div class="alert alert-success border-0 rounded-3 text-center mb-4 shadow-sm">
+                    <small class="text-muted d-block fw-semibold">🔑 Demo System OTP Notification</small>
+                    <span class="fs-3 fw-bold text-success font-monospace">{{ demo_otp }}</span>
+                    <small class="d-block text-secondary mt-1">Sent via notification service. Valid for 10 minutes.</small>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('verify_otp') }}">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary text-center d-block">6-Digit Code</label>
+                        <input type="text" name="otp_code" class="form-control text-center font-monospace fs-2 fw-bold tracking-widest bg-light" placeholder="000000" maxlength="6" pattern="[0-9]{6}" autofocus required style="letter-spacing: 0.5rem;">
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold fs-6 shadow-sm mb-3">
+                        Verify & Access Dashboard →
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <form method="POST" action="{{ url_for('resend_otp') }}" class="d-inline">
+                        <button type="submit" class="btn btn-link text-primary text-decoration-none fw-semibold">
+                            🔄 Resend Code
+                        </button>
+                    </form>
+                    <span class="text-muted">|</span>
+                    <a href="{{ url_for('login') }}" class="text-secondary text-decoration-none small ms-2">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

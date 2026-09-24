@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center">
+                <div class="brand-icon mx-auto mb-3" style="width: 70px; height: 70px; font-size: 2.2rem;">👤</div>
+                <h3 class="fw-bold text-dark">{{ user.name }}</h3>
+                <p class="text-muted mb-4">Patient Profile & Account Settings</p>
+
+                <div class="text-start bg-light p-4 rounded-4 mb-4">
+                    <div class="mb-3">
+                        <small class="text-muted fw-semibold d-block">Registered Email</small>
+                        <span class="fs-6 fw-bold text-dark">{{ user.email or 'Not provided' }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted fw-semibold d-block">Phone Number</small>
+                        <span class="fs-6 fw-bold text-dark">{{ user.phone or 'Not provided' }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted fw-semibold d-block">Two-Factor Authentication</small>
+                        <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Active (OTP Verified)</span>
+                    </div>
+                    <div>
+                        <small class="text-muted fw-semibold d-block">Member Since</small>
+                        <span class="small text-secondary">{{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'Recent' }}</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary rounded-pill px-4">← Dashboard</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger rounded-pill px-4">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

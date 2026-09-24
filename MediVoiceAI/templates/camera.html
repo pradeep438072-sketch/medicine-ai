@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Camera Medicine Scanner – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="text-center mb-4">
+                    <span class="badge bg-info-subtle text-info px-3 py-1 rounded-pill mb-2">AI & OCR Scanner</span>
+                    <h3 class="fw-bold text-dark">📷 Camera Medicine Detection</h3>
+                    <p class="text-muted">Point your camera at a medicine packaging, tablet strip, or bottle label.</p>
+                </div>
+
+                <!-- Camera Viewport / Frame -->
+                <div class="camera-wrapper mb-4">
+                    <div id="camera-placeholder" class="text-center text-white py-5 px-3">
+                        <span class="fs-1 d-block mb-3">📸</span>
+                        <h5>Camera Ready</h5>
+                        <p class="text-white-50 small mb-4">Click "Start Camera" to enable video feed or upload an image file.</p>
+                        <button type="button" class="btn btn-info text-dark fw-bold rounded-pill px-4" id="btn-start-camera">
+                            ▶️ Start Camera
+                        </button>
+                    </div>
+
+                    <video id="camera-video" class="d-none" autoplay playsinline></video>
+                    <img id="camera-preview" class="d-none" alt="Medicine preview">
+                    <div class="scan-laser d-none"></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="text-center mb-4">
+                    <button type="button" class="btn btn-primary rounded-pill px-5 py-2 fw-bold d-none shadow" id="btn-capture-scan">
+                        📸 Capture & Scan Label
+                    </button>
+                </div>
+
+                <!-- File Upload Fallback Option -->
+                <div class="card bg-light border-0 rounded-4 p-3 mb-4">
+                    <label class="form-label fw-semibold text-secondary small mb-2">Or Upload a Photo from Your Device / Files:</label>
+                    <input type="file" id="file-image-upload" class="form-control" accept="image/*">
+                </div>
+
+                <!-- Scanning Spinner -->
+                <div id="scan-loading" class="text-center py-4 d-none">
+                    <div class="spinner-border text-info mb-2" role="status"></div>
+                    <h6 class="fw-bold text-dark">Analyzing Medicine Packaging...</h6>
+                    <small class="text-muted">Running OCR extraction & clinical cross-verification</small>
+                </div>
+
+                <!-- Result Container -->
+                <div id="scan-result" class="d-none mt-3"></div>
+
+                <div class="alert alert-secondary border-0 rounded-3 mt-4 small p-3">
+                    <strong>💡 Accuracy Tip:</strong> Ensure good lighting and that the medicine name (e.g. <em>Paracetamol, Amoxicillin, Ibuprofen</em>) or dosage strength is clearly visible. If non-medicine objects or unreadable blur are scanned, the system will indicate <em>“Not a medicine found.”</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+{% endblock %}

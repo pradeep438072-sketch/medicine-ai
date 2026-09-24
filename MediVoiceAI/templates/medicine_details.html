@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}{{ med.name }} – Medicine Details{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-primary-subtle text-primary border px-3 py-1 rounded-pill">{{ med.category }}</span>
+                            {% if med.is_active %}
+                                <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary px-3 py-1 rounded-pill">Archived / Inactive</span>
+                            {% endif %}
+                        </div>
+                        <h2 class="fw-bold text-dark mb-1">{{ med.name }}</h2>
+                        {% if med.generic_name %}
+                            <h6 class="text-muted fw-normal">Generic / Scientific: {{ med.generic_name }}</h6>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('edit_medicine_page', med_id=med.id) }}" class="btn btn-outline-primary rounded-pill px-3">✏️ Edit</a>
+                        <a href="{{ url_for('medicines_list') }}" class="btn btn-light border rounded-pill px-3">← Back</a>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <span class="text-muted small fw-semibold d-block">Dosage Amount</span>
+                            <span class="fs-4 fw-bold text-dark">{{ med.dosage_amount }} {{ med.dosage_unit }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <span class="text-muted small fw-semibold d-block">Frequency & Times</span>
+                            <span class="fs-5 fw-bold text-dark">{{ med.frequency }}</span>
+                            <span class="d-block text-primary small font-monospace mt-1">{{ med.reminder_time }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <span class="text-muted small fw-semibold d-block">Daily Dosage Limit</span>
+                            <span class="fs-5 fw-semibold text-secondary">{{ med.dosage_limit }}</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded-3">
+                            <span class="text-muted small fw-semibold d-block">Course Duration</span>
+                            <span class="fw-bold text-dark">{{ med.start_date }}</span>
+                            {% if med.end_date %}
+                                <span class="text-muted"> to </span><span class="fw-bold text-dark">{{ med.end_date }}</span>
+                            {% else %}
+                                <span class="badge bg-info-subtle text-info ms-2">Ongoing</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded-3">
+                            <span class="text-muted small fw-semibold d-block">Voice Announce Test</span>
+                            <button class="btn btn-sm btn-outline-info rounded-pill px-3 mt-1" onclick="window.triggerTestReminder('{{ med.name }}', '{{ med.dosage_amount }}')">
+                                🔊 Test Voice Reminder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes / Usage info -->
+                <div class="p-4 bg-light rounded-4 mb-4">
+                    <h6 class="fw-bold text-dark mb-2">📋 Suggested Usage & Patient Notes</h6>
+                    <p class="mb-0 text-secondary">
+                        {{ med.notes or "No additional notes specified for this medicine." }}
+                    </p>
+                </div>
+
+                <!-- Dosage logs for this medicine -->
+                <h5 class="fw-bold text-dark mb-3">🕒 Recent Dosage History</h5>
+                {% if logs %}
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Scheduled</th>
+                                <th>Status</th>
+                                <th>Logged At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.scheduled_date }}</td>
+                                <td class="font-monospace text-primary">{{ log.scheduled_time }}</td>
+                                <td>
+                                    {% if log.status == 'taken' %}
+                                        <span class="badge badge-taken px-2 py-1 rounded-pill">Taken</span>
+                                    {% elif log.status == 'skipped' %}
+                                        <span class="badge badge-skipped px-2 py-1 rounded-pill">Skipped</span>
+                                    {% else %}
+                                        <span class="badge badge-pending px-2 py-1 rounded-pill">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted small">{{ log.action_time.strftime('%I:%M %p') if log.action_time else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted small">No logs recorded yet for this medicine.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

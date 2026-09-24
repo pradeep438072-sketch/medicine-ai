@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}AI Medicine Suggestions – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="text-center mb-4">
+                    <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-1 rounded-pill mb-2">Clinical Reference</span>
+                    <h3 class="fw-bold text-dark">🩺 AI Symptom & Medicine Guidance</h3>
+                    <p class="text-muted">Enter your symptoms to receive general medicine-related information and supportive care options.</p>
+                </div>
+
+                <!-- Mandatory Warning Banner -->
+                <div class="medical-disclaimer mb-4 d-flex align-items-center gap-3">
+                    <span class="fs-2">⚠️</span>
+                    <div>
+                        <strong>Medical Notice:</strong>
+                        <p class="mb-0">This information is for general guidance only. Consult a qualified doctor or pharmacist before taking any medicine. Do not treat these insights as a clinical diagnosis or medical prescription.</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('suggestions_page') }}" class="mb-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Describe Your Symptoms:</label>
+                        <textarea name="symptoms" class="form-control" rows="3" placeholder="e.g., I have a mild headache, slight fever and body ache..." required>{{ symptoms or '' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold">
+                        Analyze Guidance →
+                    </button>
+                </form>
+
+                {% if result %}
+                <div class="card border border-primary-subtle bg-light rounded-4 p-4 mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">Possible Condition / Focus: <span class="text-primary">{{ result.condition }}</span></h5>
+                        <span class="badge bg-primary text-white rounded-pill px-3">General Reference</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-semibold text-secondary small d-block">Commonly Associated General Medicines:</label>
+                        <div class="d-flex flex-wrap gap-2 mt-1">
+                            {% for med in result.general_medicines %}
+                                <span class="badge bg-white text-dark border px-3 py-2 fs-6 rounded-pill">{{ med }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-semibold text-secondary small d-block">Supportive Home Care:</label>
+                        <p class="text-dark small mb-0">{{ result.home_care }}</p>
+                    </div>
+
+                    <div class="p-3 bg-danger-subtle rounded-3">
+                        <label class="fw-bold text-danger small d-block mb-1">🚨 When to Seek Immediate Medical Attention:</label>
+                        <p class="text-danger small mb-0">{{ result.when_to_see_doctor }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

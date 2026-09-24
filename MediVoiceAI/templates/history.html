@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Dosage & Medicine History – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">📜 Medicine & Dosage History</h3>
+            <p class="text-muted mb-0">Search and audit your daily medication compliance and historical records.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary rounded-pill px-3">← Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Filters & Search Bar -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form method="GET" action="{{ url_for('history_page') }}" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="q" class="form-control rounded-pill" placeholder="🔍 Search medicine name..." value="{{ query }}">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select rounded-pill">
+                    <option value="" {% if not current_status %}selected{% endif %}>All Statuses</option>
+                    <option value="taken" {% if current_status == 'taken' %}selected{% endif %}>✓ Taken</option>
+                    <option value="skipped" {% if current_status == 'skipped' %}selected{% endif %}>✕ Skipped</option>
+                    <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>⏱ Pending</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="date" class="form-control rounded-pill" value="{{ selected_date }}">
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill w-100 fw-semibold">Filter</button>
+                <a href="{{ url_for('history_page') }}" class="btn btn-light border rounded-pill">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- History Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        {% if logs %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Scheduled Time</th>
+                        <th>Medicine</th>
+                        <th>Dosage</th>
+                        <th>Status</th>
+                        <th>Logged At</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="fw-semibold text-secondary">{{ log.scheduled_date }}</td>
+                        <td class="font-monospace text-primary fw-bold">{{ log.scheduled_time }}</td>
+                        <td class="fw-bold text-dark">
+                            {% if log.medicine %}
+                                <a href="{{ url_for('medicine_details_page', med_id=log.medicine_id) }}" class="text-dark text-decoration-none">
+                                    {{ log.medicine.name }}
+                                </a>
+                            {% else %}
+                                Medicine #{{ log.medicine_id }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if log.medicine %}
+                                <span class="badge bg-light text-dark border">{{ log.medicine.dosage_amount }} {{ log.medicine.dosage_unit }}</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if log.status == 'taken' %}
+                                <span class="badge badge-taken px-3 py-1 rounded-pill">Taken</span>
+                            {% elif log.status == 'skipped' %}
+                                <span class="badge badge-skipped px-3 py-1 rounded-pill">Skipped</span>
+                            {% else %}
+                                <span class="badge badge-pending px-3 py-1 rounded-pill">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">
+                            {{ log.action_time.strftime('%I:%M %p') if log.action_time else '-' }}
+                        </td>
+                        <td class="text-secondary small">{{ log.notes or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <span class="fs-1 d-block mb-2">📂</span>
+            <h5>No medicine logs found</h5>
+            <p class="small">Try adjusting your filters or complete scheduled doses on your dashboard.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Voice Assistant – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="text-center mb-4">
+                    <span class="badge bg-primary-subtle text-primary px-3 py-1 rounded-pill mb-2">Hands-Free Health</span>
+                    <h3 class="fw-bold text-dark">🎙️ MediVoice AI Assistant</h3>
+                    <p class="text-muted">Tap the microphone to speak your question or command.</p>
+                </div>
+
+                <!-- Pulsing Microphone Button -->
+                <div class="mic-btn-container">
+                    <button type="button" class="mic-button" id="mic-assistant-btn" title="Click to Speak">
+                        🎤
+                    </button>
+                </div>
+
+                <div class="text-center mb-3">
+                    <span id="assistant-status" class="text-secondary fw-semibold small">
+                        Click microphone to speak, or tap a sample question below.
+                    </span>
+                    <div id="voice-wave-animation" class="d-none text-info fs-5 mt-2">
+                        <span>●</span> <span>●</span> <span>●</span> <span>●</span>
+                    </div>
+                </div>
+
+                <!-- Quick Suggested Command Pills -->
+                <div class="mb-4">
+                    <small class="text-muted fw-bold d-block text-center mb-2">SUPPORTED VOICE COMMANDS (TAP TO TEST):</small>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="What medicines do I have today?">
+                            💬 What medicines do I have today?
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="When is my next medicine reminder?">
+                            💬 When is my next medicine reminder?
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="What is my dosage?">
+                            💬 What is my dosage?
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="What medicines are scheduled now?">
+                            💬 What medicines are scheduled now?
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="Add a medicine.">
+                            💬 Add a medicine.
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="Show my medicine history.">
+                            💬 Show my medicine history.
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-command-pill" data-command="Remind me about my medicine.">
+                            💬 Remind me about my medicine.
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Transcript Container -->
+                <div class="p-3 bg-light rounded-4 mb-4" id="assistant-chat-transcript" style="max-height: 340px; min-height: 180px; overflow-y: auto;">
+                    <div class="d-flex mb-3 justify-content-start">
+                        <div class="p-3 bg-white border rounded-4 shadow-sm text-dark" style="max-width: 80%;">
+                            <span class="badge bg-primary-subtle text-primary me-2">MediVoice AI</span>
+                            <span>Hello! I am your MediVoice assistant. You can ask me about your medicine schedule, next dosage, or instruct me to add a medicine. How can I help you today?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Input Fallback -->
+                <form id="voice-text-form" class="input-group">
+                    <input type="text" id="voice-text-input" class="form-control rounded-start-pill ps-3" placeholder="Or type your command here..." aria-label="Command">
+                    <button class="btn btn-primary rounded-end-pill px-4" type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
+{% endblock %}

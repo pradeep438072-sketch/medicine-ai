@@ -1,0 +1,6 @@
+{
+  "name": "MediVoice AI",
+  "description": "MediVoice AI – Medicine Reminder and Voice Assistant featuring live clock, dosage tracking, camera-based medicine OCR, smart voice assistant, and reminders.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

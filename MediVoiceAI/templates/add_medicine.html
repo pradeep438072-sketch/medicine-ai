@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Add Medicine – MediVoice AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">➕ Add New Medicine</h3>
+                        <p class="text-muted mb-0">Fill in the prescription details or <a href="{{ url_for('camera_scan') }}" class="text-primary fw-semibold">scan with camera</a></p>
+                    </div>
+                    <a href="{{ url_for('medicines_list') }}" class="btn btn-outline-secondary rounded-pill px-3">← Back</a>
+                </div>
+
+                <form method="POST" action="{{ url_for('add_medicine_page') }}">
+                    <div class="row g-3">
+                        <!-- Medicine Name -->
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold text-secondary">Medicine Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Paracetamol" value="{{ request.args.get('name', '') }}" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-md-5">
+                            <label class="form-label fw-semibold text-secondary">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="Pain & Fever" {% if 'Pain' in request.args.get('category', '') %}selected{% endif %}>Pain & Fever</option>
+                                <option value="Antibiotic" {% if 'Antibiotic' in request.args.get('category', '') %}selected{% endif %}>Antibiotic</option>
+                                <option value="Blood Pressure" {% if 'Pressure' in request.args.get('category', '') %}selected{% endif %}>Blood Pressure</option>
+                                <option value="Diabetes" {% if 'Diabetes' in request.args.get('category', '') %}selected{% endif %}>Diabetes</option>
+                                <option value="Antacid / GERD" {% if 'Antacid' in request.args.get('category', '') %}selected{% endif %}>Antacid / GERD</option>
+                                <option value="Allergy" {% if 'Allergy' in request.args.get('category', '') %}selected{% endif %}>Allergy</option>
+                                <option value="Supplement / Vitamin" {% if 'Vitamin' in request.args.get('category', '') %}selected{% endif %}>Supplement / Vitamin</option>
+                                <option value="Cardiac" {% if 'Cardiac' in request.args.get('category', '') %}selected{% endif %}>Cardiac</option>
+                                <option value="General" selected>General</option>
+                            </select>
+                        </div>
+
+                        <!-- Generic Name -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Generic / Brand Name</label>
+                            <input type="text" name="generic_name" class="form-control" placeholder="e.g. Acetaminophen" value="{{ request.args.get('generic', '') }}">
+                        </div>
+
+                        <!-- Dosage Amount & Unit -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold text-secondary">Dosage Amount <span class="text-danger">*</span></label>
+                            <input type="text" name="dosage_amount" class="form-control" placeholder="e.g. 500" value="{{ request.args.get('dosage', '500') }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold text-secondary">Unit <span class="text-danger">*</span></label>
+                            <select name="dosage_unit" class="form-select">
+                                <option value="mg" selected>mg</option>
+                                <option value="ml">ml</option>
+                                <option value="tablet">tablet(s)</option>
+                                <option value="capsule">capsule(s)</option>
+                                <option value="drops">drops</option>
+                                <option value="IU">IU</option>
+                            </select>
+                        </div>
+
+                        <!-- Frequency & Doses per day -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Frequency</label>
+                            <input type="text" name="frequency" class="form-control" placeholder="e.g. Daily, Twice daily, Every 8 hours" value="{{ request.args.get('freq', 'Once daily') }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Doses Per Day</label>
+                            <input type="number" name="doses_per_day" class="form-control" min="1" max="10" value="1" required>
+                        </div>
+
+                        <!-- Reminder Time (12-Hour AM/PM format) -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Reminder Time (12-Hour AM/PM) <span class="text-danger">*</span></label>
+                            <input type="text" name="reminder_time" class="form-control font-monospace" placeholder="e.g. 08:00 AM, 08:00 PM" value="08:00 AM" required>
+                            <small class="text-muted">Use 12-hour format with AM/PM (e.g. 09:00 AM)</small>
+                        </div>
+
+                        <!-- Dosage Limit -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Dosage Limit</label>
+                            <input type="text" name="dosage_limit" class="form-control" placeholder="e.g. Max 3 doses / 24 hours" value="{{ request.args.get('limit', 'Max 4 doses/day') }}">
+                        </div>
+
+                        <!-- Start Date & End Date -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" name="start_date" class="form-control" id="start-date-input" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">End Date (Optional)</label>
+                            <input type="date" name="end_date" class="form-control" placeholder="Leave empty for ongoing">
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-secondary">Additional Notes / Doctor Instructions</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="e.g. Take after breakfast with water. Avoid empty stomach.">{{ request.args.get('notes', '') }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                        <a href="{{ url_for('medicines_list') }}" class="btn btn-light px-4 rounded-pill">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">
+                            Save Medicine & Schedule
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Default start date to today's date
+    document.addEventListener("DOMContentLoaded", () => {
+        const today = new Date().toISOString().split("T")[0];
+        const startInput = document.getElementById("start-date-input");
+        if (startInput && !startInput.value) {
+            startInput.value = today;
+        }
+    });
+</script>
+{% endblock %}
