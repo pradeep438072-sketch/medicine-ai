@@ -17,12 +17,26 @@ from ai.ocr_reader import analyze_medicine_image
 from ai.medicine_detector import get_medicine_suggestions, DISCLAIMER_TEXT
 from ai.voice_assistant import process_voice_command
 
-app = Flask(__name__)
+BASE_DIR = Path(__file__).resolve().parent
+
+app = Flask(
+    __name__,
+    template_folder=str(BASE_DIR / "templates"),
+    static_folder=str(BASE_DIR / "static"),
+    static_url_path="/static"
+)
 app.config.from_object(Config)
 
-# Ensure instance and upload directories exist
-os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-os.makedirs(app.instance_path, exist_ok=True)
+# Safely ensure upload folder and instance directories exist
+try:
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+except OSError:
+    pass
+
+try:
+    os.makedirs(app.instance_path, exist_ok=True)
+except OSError:
+    pass
 
 db.init_app(app)
 
@@ -464,6 +478,13 @@ def api_camera_scan():
         gemini_api_key=app.config.get("GEMINI_API_KEY")
     )
 
+    # Safely clean up temporary file to conserve serverless storage
+    try:
+        if os.path.exists(save_path):
+            os.remove(save_path)
+    except Exception:
+        pass
+
     return jsonify(result)
 
 
@@ -616,21 +637,26 @@ def seed_starter_medicines(user_id):
     db.session.commit()
 
 
-with app.app_context():
-    db.create_all()
-    # If no users exist, create default demo patient
-    if not User.query.first():
-        demo_user = User(
-            name="Sarah Connor",
-            email="patient@medivoice.ai",
-            phone="+1234567890"
-        )
-        demo_user.set_password("password123")
-        db.session.add(demo_user)
-        db.session.commit()
-        seed_starter_medicines(demo_user.id)
-        print("[INIT] Created demo patient: patient@medivoice.ai / password123")
+def init_database():
+    try:
+        with app.app_context():
+            db.create_all()
+            # If no users exist, create default demo patient
+            if not User.query.first():
+                demo_user = User(
+                    name="Sarah Connor",
+                    email="patient@medivoice.ai",
+                    phone="+1234567890"
+                )
+                demo_user.set_password("password123")
+                db.session.add(demo_user)
+                db.session.commit()
+                seed_starter_medicines(demo_user.id)
+                print("[INIT] Created demo patient: patient@medivoice.ai / password123")
+    except Exception as e:
+        print(f"[INIT] Database initialization notice: {e}")
 
+init_database()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
