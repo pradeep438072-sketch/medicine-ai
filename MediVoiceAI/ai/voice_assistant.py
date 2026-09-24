@@ -120,7 +120,15 @@ def process_voice_command(user, command_text, medicines, today_logs):
                 "action": "none"
             }
 
-    # 7. "Remind me about my medicine."
+    # 7. "What is the time?" / "What time is it?" / "Current date"
+    if any(k in cmd for k in ["what time is it", "what is the time", "current time", "tell me the time", "time now", "what is today's date", "current date", "today's date"]):
+        return {
+            "text": f"The current time is {now_str} on {now_time.strftime('%B %d, %Y')}.",
+            "spoken": f"The current time is {now_str}.",
+            "action": "none"
+        }
+
+    # 8. "Remind me about my medicine."
     if any(k in cmd for k in ["remind me about my medicine", "remind me", "set reminder", "trigger reminder"]):
         active_meds = [m for m in medicines if m.is_active]
         if active_meds:

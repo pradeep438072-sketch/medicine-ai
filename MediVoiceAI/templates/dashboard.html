@@ -12,13 +12,16 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="badge bg-info text-dark fw-bold px-3 py-1 rounded-pill">LIVE CLOCK</span>
-                        <span class="text-white-50" id="live-date-display">Today</span>
+                        <span class="text-white-50 live-clock-date fw-medium" id="live-date-display">September 24, 2026</span>
                     </div>
                     <div class="d-flex align-items-baseline gap-2 mt-2">
                         <div class="clock-time" id="dashboard-clock-time">
-                            <span id="live-time-display">--:--:--</span>
+                            <span class="live-clock-time" id="live-time-display">--:--:--</span>
                         </div>
-                        <span class="clock-ampm" id="live-ampm-display">--</span>
+                        <span class="clock-ampm live-clock-ampm" id="live-ampm-display">--</span>
+                    </div>
+                    <div class="mt-2 text-white-50 small">
+                        <span class="text-info fw-semibold">Current Time:</span> <span class="live-clock-full text-white fw-bold font-monospace ms-1" id="live-clock-full">--:--:-- --</span>
                     </div>
                 </div>
                 <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -248,4 +251,13 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Safeguard: immediately trigger live clock update when dashboard DOM is mounted
+    if (typeof initLiveClock === 'function') {
+        initLiveClock();
+    }
+</script>
 {% endblock %}

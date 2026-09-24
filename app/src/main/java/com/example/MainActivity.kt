@@ -191,7 +191,7 @@ fun MediVoiceApp(onSpeak: (String) -> Unit) {
     // Live clock updater
     LaunchedEffect(Unit) {
         val timeFormat = SimpleDateFormat("hh:mm:ss a", Locale.US)
-        val dateFormat = SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.US)
+        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.US)
         while (true) {
             val now = Date()
             liveTime = timeFormat.format(now)
@@ -373,6 +373,12 @@ fun DashboardScreen(
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = "Current Time: ${if (liveTime.isNotEmpty()) liveTime else "--:--:-- --"}",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = AccentCyan
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
